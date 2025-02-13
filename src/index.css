@@ -29,3 +29,6 @@ img {
   -o-user-drag: none;
 }
 
+::-webkit-scrollbar {
+  width: 0;
+}
