@@ -1,0 +1,31 @@
+@import url("https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  font-family: "Nunito", "Merriweather";
+}
+
+body {
+  background-color: #0a0a0a;
+}
+
+/* ... */
+html {
+  scroll-behavior: smooth;
+}
+
+::selection {
+  background-color: #ffd000;
+  color: #000000;
+}
+
+img {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+}
+
