@@ -6,20 +6,31 @@ const AudioPlayer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
-    const playAudioOnUserInteraction = () => {
-      if (!isPlaying) {
-        audioRef.current.play().catch((error) => {
-          console.error("Autoplay failed:", error);
-        });
+    const audio = audioRef.current;
+
+    
+    audio.muted = true;
+    audio.play()
+      .then(() => {
+        audio.muted = false;
         setIsPlaying(true);
-        document.removeEventListener("click", playAudioOnUserInteraction);
+      })
+      .catch((error) => {
+        console.warn("Autoplay blocked. Waiting for user interaction.", error);
+      });
+
+    const enableAudio = () => {
+      if (!isPlaying) {
+        audio.play();
+        setIsPlaying(true);
+        document.removeEventListener("click", enableAudio);
       }
     };
 
-    document.addEventListener("click", playAudioOnUserInteraction);
+    document.addEventListener("click", enableAudio);
 
     return () => {
-      document.removeEventListener("click", playAudioOnUserInteraction);
+      document.removeEventListener("click", enableAudio);
     };
   }, [isPlaying]);
 
@@ -35,7 +46,7 @@ const AudioPlayer = () => {
 
   return (
     <div className="flex justify-center items-center gap-2">
-      <audio ref={audioRef} src="/music.mp3" type="audio/mp3" />
+      <audio ref={audioRef} src="/music.mp3" type="audio/mp3" preload="auto" />
       <button
         className="bg-white flex justify-center items-center py-1 px-3 rounded-md hover:bg-blue-500 hover:text-white"
         onClick={playAudio}
