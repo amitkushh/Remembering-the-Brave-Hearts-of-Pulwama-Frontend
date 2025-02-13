@@ -7,24 +7,28 @@ const AudioPlayer = () => {
 
   useEffect(() => {
     const audio = audioRef.current;
+    
+    
+    const tryAutoplay = async () => {
+      try {
+        audio.muted = true; 
+        await audio.play();
+        audio.muted = false; 
+        setIsPlaying(true);
+      } catch (error) {
+        console.warn("Autoplay blocked. Waiting for user interaction.");
+      }
+    };
+
+    tryAutoplay();
 
     
-    audio.muted = true;
-    audio.play()
-      .then(() => {
-        audio.muted = false;
-        setIsPlaying(true);
-      })
-      .catch((error) => {
-        console.warn("Autoplay blocked. Waiting for user interaction.", error);
-      });
-
     const enableAudio = () => {
       if (!isPlaying) {
         audio.play();
         setIsPlaying(true);
-        document.removeEventListener("click", enableAudio);
       }
+      document.removeEventListener("click", enableAudio);
     };
 
     document.addEventListener("click", enableAudio);
@@ -32,35 +36,38 @@ const AudioPlayer = () => {
     return () => {
       document.removeEventListener("click", enableAudio);
     };
-  }, [isPlaying]);
+  }, []);
 
-  const playAudio = () => {
-    audioRef.current.play();
-    setIsPlaying(true);
-  };
-
-  const pauseAudio = () => {
-    audioRef.current.pause();
-    setIsPlaying(false);
+  const togglePlayPause = () => {
+    const audio = audioRef.current;
+    if (isPlaying) {
+      audio.pause();
+    } else {
+      audio.play();
+    }
+    setIsPlaying(!isPlaying);
   };
 
   return (
     <div className="flex justify-center items-center gap-2">
       <audio ref={audioRef} src="/music.mp3" type="audio/mp3" preload="auto" />
       <button
-        className="bg-white flex justify-center items-center py-1 px-3 rounded-md hover:bg-blue-500 hover:text-white"
-        onClick={playAudio}
+        className="bg-white flex justify-center items-center py-2 px-4 rounded-md hover:bg-gray-500"
+        onClick={togglePlayPause}
       >
-        Play <CiPlay1 />
-      </button>
-      <button
-        className="bg-white flex justify-center items-center py-1 px-3 rounded-md hover:bg-red-600 hover:text-white"
-        onClick={pauseAudio}
-      >
-        Pause <CiPause1 />
+        {isPlaying ? (
+          <>
+            Pause <CiPause1 />
+          </>
+        ) : (
+          <>
+            Play <CiPlay1 />
+          </>
+        )}
       </button>
     </div>
   );
 };
 
 export default AudioPlayer;
+
