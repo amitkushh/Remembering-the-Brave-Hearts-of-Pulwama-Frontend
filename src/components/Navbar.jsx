@@ -1,5 +1,5 @@
 import { GiCandleLight } from "react-icons/gi";
-import AudioPlayer from "./audio/audio";
+import AudioPlayer from "./audio/Audio.jsx";
 
 function Navbar() {
   return (
