@@ -1,4 +1,5 @@
 import React from "react";
+import { supabase } from "../../supabase/supabaseClient.js";
 import { useEffect, useState } from "react";
 
 function TributeWall() {
@@ -7,22 +8,51 @@ function TributeWall() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    const savedMessages = JSON.parse(localStorage.getItem("messages")) || [];
-    setMessages(savedMessages);
+    fetchMessages();
+
+    const subscription = supabase
+      .channel("realtime-messages")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "messages" },
+        (payload) => {
+          setMessages((prevMessages) => [payload.new, ...prevMessages]);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(subscription);
+    };
   }, []);
 
-  const handleSubmit = (e) => {
+  const fetchMessages = async () => {
+    let { data, error } = await supabase
+      .from("messages")
+      .select("*")
+      .order("timestamp", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching messages:", error);
+    } else {
+      setMessages(data);
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name || !message) return alert("Both fields are required!");
 
-    const newMessage = { name, message, timestamp: new Date().toISOString() };
-    const updatedMessages = [newMessage, ...messages];
+    const { error } = await supabase
+      .from("messages")
+      .insert([{ name, message }]);
 
-    localStorage.setItem("messages", JSON.stringify(updatedMessages));
-    setMessages(updatedMessages);
-
-    setName("");
-    setMessage("");
+    if (error) {
+      console.error("Error saving message:", error);
+    } else {
+      setName("");
+      setMessage("");
+    }
   };
 
   return (
@@ -52,7 +82,7 @@ function TributeWall() {
       </form>
 
       {/* Display Messages */}
-      <div className="mt-5 w-full max-h-60 overflow-y-auto">
+      <div className="mt-5 w-full max-h-60 overflow-y-auto md:max-w-[570px]">
         {messages.map((msg, index) => (
           <div key={index} className="p-4 bg-gray-800 rounded-md mb-3">
             <h3 className="font-bold text-white text-xl">{msg.name}</h3>
