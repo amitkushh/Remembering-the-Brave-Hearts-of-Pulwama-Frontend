@@ -1,8 +1,21 @@
-# React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# Remembering the Brave Hearts of Pulwama
 
-Currently, two official plugins are available:
+This is a simple project which has been built on Pulwama. I have made this for 14th February. This website contains the names of all the soldiers and their generated photos.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+I have included audio in it and have also added the message option so that people can add their messages.
+
+
+
+## Tech Stack
+
+**Client:** React, TailwindCSS
+
+**Server:** Supabase
+
+
+## Features
+
+- Audio play and pause option
+- Message add 
+
